@@ -284,3 +284,48 @@ Restore the volume with a tarball archive.
 ### Networking
 `docker run --name netshoot --rm -it nicolaka/netshoot /bin/bash`
 
+
+
+
+
+
+#### Installing docker playbook Ansible 
+
+
+
+
+
+---
+- hosts: all
+  
+  become: yes
+  tasks:
+
+  # Install Docker
+  # --
+  # 
+  - name: install prerequisites
+    apt:
+      name:
+        - docker.io
+      update_cache: yes
+
+  - name: add user permissions
+    shell: "usermod -aG docker {{ ansible_env.SUDO_USER }}"
+
+  - name: Reset ssh connection for changes to take effect
+    meta: "reset_connection"
+
+  # Installs Docker SDK
+  # --
+  # 
+  - name: install python package manager
+    apt:
+      name: python3-pip
+  
+  - name: install python sdk
+    become_user: "{{ ansible_env.SUDO_USER }}"
+    pip:
+      name:
+        - docker
+        - docker-compose
